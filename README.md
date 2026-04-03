@@ -1,7 +1,5 @@
 ## Order-App 「八雲」
 
-First, run the development server:
-
 ## 技術スタック
 
 ### フロントエンド
