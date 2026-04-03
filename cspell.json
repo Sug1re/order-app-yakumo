@@ -1,0 +1,30 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "firestore",
+    "Firestore",
+    "cloudsdktool",
+    "vercel",
+    "libc",
+    "elif",
+    "addgroup",
+    "adduser",
+    "nextjs",
+    "Xtfxs",
+    "firebaseapp",
+    "firebasestorage",
+    "1msogSGMAohuBrzmNLCOZchh",
+    "cloudbuild",
+    "yakumo",
+  ],
+  "ignorePaths": [
+    "node_modules",
+    ".next",
+    "public",
+    "*.js",
+    "*.log",
+    ".turbo",
+    ".git"
+  ]
+}
