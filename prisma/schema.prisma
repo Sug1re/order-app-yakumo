@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+// OTP（認証コードの一時保存）
+model Otp {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  hashedOtp String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@map("otps")
+}
+
+model Owner {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+
+  shop      Shop?
+
+  @@map("owners")
+}
+
+model Shop {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+
+  owner     Owner    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId   String   @unique
+
+  @@map("shops")
+}

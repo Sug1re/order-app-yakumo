@@ -1,6 +1,6 @@
 import { Header } from "@/components/layouts/Header";
 
-export default function HomePage() {
+export default function OwnerDashboard() {
   return (
     <>
       <Header />
