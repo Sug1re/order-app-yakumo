@@ -7,22 +7,24 @@ import { Input } from "@/components/layouts/Input";
 import { useToastContext } from "@/context/toast/ToastContext";
 import { BaseBt } from "@/components/layouts/BaseBt";
 import { useLoading } from "@/context/loading/useLoading";
-import { verifyOtp } from "../../actions/Form/verifyOtp";
+import { confirmOwnerOtp } from "../actions/confirmOwnerOtp";
+import { requestOwnerOtp } from "../actions/requestOwnerOtp";
 
-export const OwnerVerifyForm = () => {
+export const ConfirmOwnerForm = () => {
   const [otp, setOtp] = useState("");
 
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const email = searchParams.get("email") || "";
+  const name = searchParams.get("name") || "";
 
   const { showLoading, hideLoading } = useLoading();
   const { showSuccessToast, showErrorToast } = useToastContext();
 
   const [error, setError] = useState<string | undefined>();
 
-  const isVerify = async () => {
+  const onConfirm = async () => {
     if (!otp) {
       setError("認証コードを入力してください");
       return;
@@ -32,14 +34,13 @@ export const OwnerVerifyForm = () => {
       showLoading();
       setError(undefined);
 
-      const res = await verifyOtp(email, otp);
+      const res = await confirmOwnerOtp(email, otp);
 
-      // 👇 ここ追加（仮ログイン状態）
       localStorage.setItem("tempAuth", JSON.stringify(res.user));
 
       showSuccessToast("認証に成功しました");
 
-      router.push("/auth/owner/setup");
+      router.push("/owner/setup");
     } catch (error) {
       if (error instanceof Error) {
         if (error.message === "期限切れです") {
@@ -54,6 +55,23 @@ export const OwnerVerifyForm = () => {
       }
 
       showErrorToast("認証に失敗しました");
+    } finally {
+      hideLoading();
+    }
+  };
+
+  const onResend = async () => {
+    if (!email || !name) return;
+
+    try {
+      showLoading();
+
+      await requestOwnerOtp(email, name);
+
+      showSuccessToast("認証コードを再送信しました");
+    } catch (error) {
+      console.error(error);
+      showErrorToast("再送信に失敗しました");
     } finally {
       hideLoading();
     }
@@ -79,7 +97,9 @@ export const OwnerVerifyForm = () => {
         helperText={error}
       />
 
-      <BaseBt onClick={isVerify} title="認証する" />
+      <BaseBt onClick={onConfirm} type="submit" title="認証する" />
+
+      <BaseBt type="button" title="認証コードを再送信" onClick={onResend} />
     </Box>
   );
 };

@@ -1,6 +1,6 @@
 import { Header } from "@/components/layouts/Header";
 
-export default function AuthOwnerDashboard() {
+export default function OwnerDashboard() {
   return (
     <>
       <Header />

@@ -7,9 +7,9 @@ import { Input } from "@/components/layouts/Input";
 import { useToastContext } from "@/context/toast/ToastContext";
 import { BaseBt } from "@/components/layouts/BaseBt";
 import { useLoading } from "@/context/loading/useLoading";
-import { sendOtp } from "../../actions/Form/sendOtp";
+import { requestOwnerOtp } from "../actions/requestOwnerOtp";
 
-export const OwnerSignupForm = () => {
+export const RequestOwnerForm = () => {
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const router = useRouter();
@@ -22,7 +22,7 @@ export const OwnerSignupForm = () => {
     name?: string;
   }>({});
 
-  const isSignup = async () => {
+  const onRequest = async () => {
     if (!email || !name) {
       setErrors({
         email: !email ? "メールアドレスを入力してください" : undefined,
@@ -35,11 +35,11 @@ export const OwnerSignupForm = () => {
       showLoading();
       setErrors({});
 
-      await sendOtp(email, name);
+      await requestOwnerOtp(email, name);
 
       showSuccessToast("認証コードを送信しました");
 
-      router.push(`/auth/owner/verify?email=${email}&name=${name}`);
+      router.push(`/owner/verify?email=${email}&name=${name}`);
     } catch {
       showErrorToast("送信に失敗しました");
     } finally {
@@ -76,7 +76,7 @@ export const OwnerSignupForm = () => {
         helperText={errors.email}
       />
 
-      <BaseBt onClick={isSignup} title="新規登録" />
+      <BaseBt onClick={onRequest} type="submit" title="新規登録" />
     </Box>
   );
 };

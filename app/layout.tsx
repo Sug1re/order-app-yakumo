@@ -1,7 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { ThemeRegistry } from "@/components/providers/ThemeRegistry";
-import { AuthProvider } from "@/context/auth/AuthProvider";
 import { ToastProvider } from "@/context/toast/ToastProvider";
 import { LoadingProvider } from "@/context/loading/LoadingProvider";
 
@@ -20,9 +19,7 @@ export default function RootLayout({
       <body>
         <ThemeRegistry>
           <ToastProvider>
-            <LoadingProvider>
-              <AuthProvider>{children}</AuthProvider>
-            </LoadingProvider>
+            <LoadingProvider>{children}</LoadingProvider>
           </ToastProvider>
         </ThemeRegistry>
       </body>

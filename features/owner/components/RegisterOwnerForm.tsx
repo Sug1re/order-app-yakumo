@@ -1,27 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/layouts/Input";
 import { BaseBt } from "@/components/layouts/BaseBt";
 import { useToastContext } from "@/context/toast/ToastContext";
 import { useLoading } from "@/context/loading/useLoading";
-import { useTempAuthGuard } from "@/features/auth/hooks/useTempAuthGuard";
-import { createOwner } from "../../actions/Form/createOwner";
+import { registerOwner } from "../actions/registerOwner";
 
-export const OwnerSetupForm = () => {
+export const RegisterOwnerForm = () => {
   const router = useRouter();
-
-  const { user } = useTempAuthGuard();
 
   const { showLoading, hideLoading } = useLoading();
   const { showSuccessToast, showErrorToast } = useToastContext();
 
   const [shopName, setShopName] = useState("");
+  const [user, setUser] = useState<{ email: string; name: string } | null>(
+    null,
+  );
+
   const [error, setError] = useState<string | undefined>();
 
-  const isSetup = async () => {
+  // 🔐 仮ログインチェック
+  useEffect(() => {
+    const tempAuth = localStorage.getItem("tempAuth");
+
+    if (!tempAuth) {
+      router.replace("/owner/signup");
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(tempAuth);
+      setUser(parsed);
+    } catch {
+      router.replace("/owner/signup");
+    }
+  }, [router]);
+
+  // 登録処理
+  const onRegister = async () => {
     if (!shopName) {
       setError("店舗名を入力してください");
       return;
@@ -33,25 +52,18 @@ export const OwnerSetupForm = () => {
       showLoading();
       setError(undefined);
 
-      console.log("📡 createOwner call");
+      const res = await registerOwner(user.email, user.name, shopName);
 
-      const res = await createOwner(user.email, user.name, shopName);
-
-      console.log("✅ createOwner success");
-
-      // 🟢 本ログイン状態
-      localStorage.setItem("owner", JSON.stringify(res.owner));
-
-      // 🧹 仮ログイン削除
+      // 🔥 本登録完了 → tempAuth削除
       localStorage.removeItem("tempAuth");
 
-      showSuccessToast("登録が完了しました");
+      // （必要ならここで本ログイン状態を保存）
+      localStorage.setItem("owner", JSON.stringify(res.owner));
 
-      // 🚀 ダッシュボードへ
+      showSuccessToast("店舗登録が完了しました");
+
       router.push("/owner/dashboard");
     } catch (error) {
-      console.error("❌ setup error:", error);
-
       if (error instanceof Error) {
         setError(error.message);
       } else {
@@ -84,7 +96,7 @@ export const OwnerSetupForm = () => {
         helperText={error}
       />
 
-      <BaseBt onClick={isSetup} title="登録する" />
+      <BaseBt onClick={onRegister} type="submit" title="店舗を登録する" />
     </Box>
   );
 };
