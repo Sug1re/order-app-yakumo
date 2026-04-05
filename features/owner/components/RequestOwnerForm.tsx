@@ -1,51 +1,13 @@
 "use client";
 
-import { useState } from "react";
 import { Box } from "@mui/material";
-import { useRouter } from "next/navigation";
 import { Input } from "@/components/layouts/Input";
-import { useToastContext } from "@/context/toast/ToastContext";
 import { BaseBt } from "@/components/layouts/BaseBt";
-import { useLoading } from "@/context/loading/useLoading";
-import { requestOwnerOtp } from "../actions/requestOwnerOtp";
+import { useRequestOwner } from "../hooks/useRequestOwner";
 
 export const RequestOwnerForm = () => {
-  const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const router = useRouter();
-
-  const { showLoading, hideLoading } = useLoading();
-  const { showSuccessToast, showErrorToast } = useToastContext();
-
-  const [errors, setErrors] = useState<{
-    email?: string;
-    name?: string;
-  }>({});
-
-  const onRequest = async () => {
-    if (!email || !name) {
-      setErrors({
-        email: !email ? "メールアドレスを入力してください" : undefined,
-        name: !name ? "名前を入力してください" : undefined,
-      });
-      return;
-    }
-
-    try {
-      showLoading();
-      setErrors({});
-
-      await requestOwnerOtp(email, name);
-
-      showSuccessToast("認証コードを送信しました");
-
-      router.push(`/owner/verify?email=${email}&name=${name}`);
-    } catch {
-      showErrorToast("送信に失敗しました");
-    } finally {
-      hideLoading();
-    }
-  };
+  const { email, setEmail, name, setName, errors, onRequest } =
+    useRequestOwner();
 
   return (
     <Box
@@ -76,7 +38,7 @@ export const RequestOwnerForm = () => {
         helperText={errors.email}
       />
 
-      <BaseBt onClick={onRequest} type="submit" title="新規登録" />
+      <BaseBt onClick={onRequest} title="新規登録" type="submit" />
     </Box>
   );
 };

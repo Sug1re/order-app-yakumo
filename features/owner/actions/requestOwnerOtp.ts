@@ -37,7 +37,7 @@ export async function requestOwnerOtp(email: string, name: string) {
         <h2 style="font-size: 48px; letter-spacing: 10px; font-weight: bold;">${otp}</h2>
         <p>このコードの有効期限は<strong>5分</strong>です。</p>
 
-        <a href="http://localhost:3000/owner/verify?email=${email}&name=${name}">
+        <a href="http://localhost:3000/owner/confirm?email=${email}&name=${name}">
           認証コードを入力する
         </a>
         <p>心当たりがない場合は、このメールを無視してください。</p>
