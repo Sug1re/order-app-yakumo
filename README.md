@@ -13,7 +13,8 @@
 
 ### バックエンド
 
-- Firebase（Firestore / Authentication）
+- Prisma（ORM）
+- Neon（PostgreSQL / データベース）
 
 ### メール / 通知
 
